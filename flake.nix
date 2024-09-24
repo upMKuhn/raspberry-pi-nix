@@ -54,7 +54,6 @@
         libcamera = import ./overlays/libcamera.nix (builtins.removeAttrs srcs [ "self" ]);
       };
       nixosModules.raspberry-pi = import ./rpi {
-        inherit pinned;
         core-overlay = self.overlays.core;
         libcamera-overlay = self.overlays.libcamera;
       };

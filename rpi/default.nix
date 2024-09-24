@@ -1,4 +1,4 @@
-{ pinned, core-overlay, libcamera-overlay }:
+{ pkgs, core-overlay, libcamera-overlay }:
 { lib, pkgs, config, ... }:
 
 let
@@ -297,7 +297,7 @@ in
             prev // restricted-overlay;
         in
         if cfg.pin-inputs.enable
-        then [ (pin-prev-overlay rpi-overlay pinned) ]
+        then [ (pin-prev-overlay rpi-overlay pkgs) ]
         else [ rpi-overlay ];
     };
     boot = {
