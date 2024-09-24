@@ -276,29 +276,6 @@ in
       };
     };
 
-    nixpkgs = {
-      overlays =
-        let
-          rpi-overlays = [ self.overlays.core ]
-            ++ (if config.raspberry-pi-nix.libcamera-overlay.enable
-          then [ self.overlays.libcamera ] else [ ]);
-          rpi-overlay = lib.composeManyExtensions rpi-overlays;
-          pin-prev-overlay = overlay: pinned-prev: final: prev:
-            let
-              # apply the overlay to pinned-prev and fix that so no references to the actual final
-              # and prev appear in applied-overlay
-              applied-overlay =
-                lib.fix (final: pinned-prev // overlay final pinned-prev);
-              # We only want to set keys that appear in the overlay, so restrict applied-overlay to
-              # these keys
-              restricted-overlay = lib.getAttrs (builtins.attrNames (overlay { } { })) applied-overlay;
-            in
-            prev // restricted-overlay;
-        in
-        if cfg.pin-inputs.enable
-        then [ (pin-prev-overlay rpi-overlay pkgs) ]
-        else [ rpi-overlay ];
-    };
     boot = {
       kernelParams =
         if cfg.uboot.enable then [ ]
