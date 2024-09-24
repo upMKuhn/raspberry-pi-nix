@@ -1,5 +1,4 @@
-{ pkgs, core-overlay, libcamera-overlay }:
-{ lib, pkgs, config, ... }:
+{ lib, pkgs, config, self, ... }:
 
 let
   cfg = config.raspberry-pi-nix;
@@ -280,9 +279,9 @@ in
     nixpkgs = {
       overlays =
         let
-          rpi-overlays = [ core-overlay ]
+          rpi-overlays = [ self.overlays.core ]
             ++ (if config.raspberry-pi-nix.libcamera-overlay.enable
-          then [ libcamera-overlay ] else [ ]);
+          then [ self.overlays.libcamera ] else [ ]);
           rpi-overlay = lib.composeManyExtensions rpi-overlays;
           pin-prev-overlay = overlay: pinned-prev: final: prev:
             let

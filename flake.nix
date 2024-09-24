@@ -43,7 +43,7 @@
 
   outputs = srcs@{ self, ... }:
     let
-      pinned = import srcs.nixpkgs {
+      pkgs = import srcs.nixpkgs {
         system = "aarch64-linux";
         overlays = with self.overlays; [ core libcamera ];
       };
@@ -53,21 +53,27 @@
         core = import ./overlays (builtins.removeAttrs srcs [ "self" ]);
         libcamera = import ./overlays/libcamera.nix (builtins.removeAttrs srcs [ "self" ]);
       };
-      nixosModules.raspberry-pi = import ./rpi {
-        core-overlay = self.overlays.core;
-        libcamera-overlay = self.overlays.libcamera;
-      };
+      nixosModules.raspberry-pi = import ./rpi;
+      # please call with
+      #{
+      #  core-overlay = self.overlays.core;
+      #  libcamera-overlay = self.overlays.libcamera;
+      #};
       nixosConfigurations = {
         rpi-example = srcs.nixpkgs.lib.nixosSystem {
+          specialArgs = {
+            inherit pkgs;
+            inherit self;
+          };
           system = "aarch64-linux";
           modules = [ self.nixosModules.raspberry-pi ./example ];
         };
       };
       checks.aarch64-linux = self.packages.aarch64-linux;
-      packages.aarch64-linux = with pinned.lib;
+      packages.aarch64-linux = with pkgs.lib;
         let
           kernels =
-            foldlAttrs f { } pinned.rpi-kernels;
+            foldlAttrs f { } pkgs.rpi-kernels;
           f = acc: kernel-version: board-attr-set:
             foldlAttrs
               (acc: board-version: drv: acc // {
@@ -78,10 +84,10 @@
         in
         {
           example-sd-image = self.nixosConfigurations.rpi-example.config.system.build.sdImage;
-          firmware = pinned.raspberrypifw;
-          libcamera = pinned.libcamera;
-          wireless-firmware = pinned.raspberrypiWirelessFirmware;
-          uboot-rpi-arm64 = pinned.uboot-rpi-arm64;
+          firmware = pkgs.raspberrypifw;
+          libcamera = pkgs.libcamera;
+          wireless-firmware = pkgs.raspberrypiWirelessFirmware;
+          uboot-rpi-arm64 = pkgs.uboot-rpi-arm64;
         } // kernels;
     };
 }
