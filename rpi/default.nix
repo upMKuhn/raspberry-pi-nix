@@ -5,6 +5,8 @@ let
   version = cfg.kernel-version;
   board = cfg.board;
   kernel = pkgs.rpi-kernels."${version}"."${board}";
+  rootPartition = config.filesystem."/".device;
+  rootPartitionType = config.filesystem."/".fsType;
 in
 {
   imports = [ ../sd-image ./config.nix ./i2c.nix ];
@@ -139,6 +141,9 @@ in
                   echo "migrating cmdline"
                   touch "$STATE_DIRECTORY/cmdline-migration-in-progress"
                   cp "${kernel-params}" "$TMPFILE"
+                  UUID=$(blkid -s PARTUUID -o value "${rootPartition}")
+                  sed -i "s/root=PARTUUID=[^ ]*/root=PARTUUID=$UUID/" "$TMPFILE"
+                  sed -i "s/rootfstype=[^ ]*/rootfstype=${rootPartitionType}/" "$TMPFILE"
                   mv -T "$TMPFILE" "$TARGET_FIRMWARE_DIR/cmdline.txt"
                   echo "${
                     builtins.toString kernel-params
