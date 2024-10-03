@@ -5,8 +5,8 @@ let
   version = cfg.kernel-version;
   board = cfg.board;
   kernel = pkgs.rpi-kernels."${version}"."${board}";
-  rootPartition = config.filesystems."/".device;
-  rootPartitionType = config.filesystems."/".fsType;
+  rootPartition = config.fileSystems."/".device;
+  rootPartitionType = config.fileSystems."/".fsType;
 in
 {
   imports = [ ../sd-image ./config.nix ./i2c.nix ];
