@@ -5,7 +5,7 @@ let
   version = cfg.kernel-version;
   board = cfg.board;
   kernel = pkgs.rpi-kernels."${version}"."${board}";
-  rootPartition = config.filesystem."/".device;
+  rootPartition = config.filesystems."/".device;
   rootPartitionType = config.filesystems."/".fsType;
 in
 {
