@@ -80,6 +80,8 @@ in
       "raspberry-pi-firmware-migrate" =
         {
           description = "update the firmware partition";
+          after = [ "systemd-udev-settle.service" "local-fs.target" ];
+          before = [ "systemd-vconsole-setup.service" ];
           wantedBy = if cfg.firmware-migration-service.enable then [ "multi-user.target" ] else [ ];
           serviceConfig =
             let
