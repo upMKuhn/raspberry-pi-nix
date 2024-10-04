@@ -98,6 +98,7 @@ in
               MountImages =
                 "/dev/disk/by-label/${config.sdImage.firmwarePartitionName}:${firmware-path}";
               StateDirectory = "raspberrypi-firmware";
+              AmbientCapabilities=["CAP_SYS_ADMIN" "CAP_DAC_OVERRIDE"];
               ExecStart = pkgs.writeShellScript "migrate-rpi-firmware" ''
                 shopt -s nullglob
 
