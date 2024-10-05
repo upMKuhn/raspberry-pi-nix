@@ -148,7 +148,7 @@ in
                   echo "migrating cmdline"
                   touch "$STATE_DIRECTORY/cmdline-migration-in-progress"
                   cp "${kernel-params}" "$TMPFILE"
-                  UUID=$(blkid -s PARTUUID -o value "${rootPartition}")
+                  UUID=$(${pkgs.util-linux}/bin/blkid -s PARTUUID -o value "${rootPartition}")
                   sed -i "s/root=PARTUUID=[^ ]*/root=PARTUUID=$UUID/" "$TMPFILE"
                   sed -i "s/rootfstype=[^ ]*/rootfstype=${rootPartitionType}/" "$TMPFILE"
                   mv -T "$TMPFILE" "$TARGET_FIRMWARE_DIR/cmdline.txt"
