@@ -95,6 +95,10 @@ in
             in
             {
               Type = "oneshot";
+              User = "root";
+              PrivateDevices=false;
+              PrivateNetwork=false;
+              PrivateUsers=false;
               MountImages =
                 "/dev/disk/by-label/${config.sdImage.firmwarePartitionName}:${firmware-path}";
               StateDirectory = "raspberrypi-firmware";
